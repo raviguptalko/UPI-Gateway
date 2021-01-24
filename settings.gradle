@@ -1,0 +1,3 @@
+include ':upigateway'
+include ':app'
+rootProject.name = "UPI Gateway"
