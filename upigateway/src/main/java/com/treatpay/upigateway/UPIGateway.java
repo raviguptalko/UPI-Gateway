@@ -53,6 +53,7 @@ public class UPIGateway extends AppCompatActivity {
         Intent intent = getIntent();
         amount=intent.getStringExtra("amount");
         email=intent.getStringExtra("email");
+        Global.amount=amount;
 
         // Enable Javascript
         mWebView.setWebViewClient(new WebViewClient());
