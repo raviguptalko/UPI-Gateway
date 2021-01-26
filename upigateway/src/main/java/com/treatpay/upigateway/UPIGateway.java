@@ -52,8 +52,13 @@ public class UPIGateway extends AppCompatActivity {
         mWebView = findViewById(R.id.activity_gateway);
         Intent intent = getIntent();
         amount=intent.getStringExtra("amount");
-        email=intent.getStringExtra("email");
         Global.amount=amount;
+        Global.timestamp=intent.getStringExtra("timestamp");
+        Global.api_key=intent.getStringExtra("api_key");
+        Global.salt=intent.getStringExtra("salt");
+        Global.initiator_id=intent.getStringExtra("initiator_id");
+        Global.aid=intent.getStringExtra("aid");
+        Global.api_key=intent.getStringExtra("api_key");
 
         // Enable Javascript
         mWebView.setWebViewClient(new WebViewClient());
