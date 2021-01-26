@@ -19,4 +19,8 @@ public class Global {
     public static Double amount=0.0;
     public static String order_id="";
     public static String upi_id="";
+    public static String timestamp="";
+    public static String salt="";
+    public static String api_key="";
+    public static String initiator_id="";
 }
