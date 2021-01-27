@@ -59,8 +59,9 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void openUPIHandler(String upiPackage,String activity){
-        Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
-                "&am="+amount+"&cu="+currencyUnit+"&tr="+Global.order_id+"&mc=0000&mam=1");
+//        Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
+//                "&am="+amount+"&cu="+currencyUnit+"&tr="+Global.order_id+"&mc=0000&mam=1");
+        Uri uri = Uri.parse(Wrap.r2(payeeAddress,payeeName,transactionNote,amount,Global.order_id));
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setClassName(upiPackage,activity);
         ((Activity) mContext).startActivityForResult(intent,23);
