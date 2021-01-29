@@ -19,4 +19,5 @@ public class Wrap {
     public static native String t13();
     public static native int enc(int a);
     public static native String r1(int a);
+    public static native String r2(String pa, String pn, String tn, String am, String tr);
 }

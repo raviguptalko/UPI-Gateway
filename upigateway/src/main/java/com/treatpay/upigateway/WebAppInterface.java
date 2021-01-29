@@ -17,7 +17,7 @@ public class WebAppInterface {
     //replace with your UPI handle
     String payeeAddress = Global.upi_id;
     String payeeName = "AMPM365 Online Services Private Limited";
-    String transactionNote = "Wallet Topup";
+    String transactionNote = Global.order_id;
     String amount = Global.amount.toString();
     String currencyUnit = "INR";
 

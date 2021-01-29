@@ -3,7 +3,9 @@ package com.treatpay.upigateway;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -40,7 +42,7 @@ public class UPIGateway extends AppCompatActivity {
     private WebView mWebView;
     URL url;
     Intent intent;
-    String amount,email,e1="",iv="";
+    String amount,email,e1="",iv="",amt,deviceId;
     MCrypt mcrypt;
     HttpsURLConnection con;
     JSONObject jsonObject;
@@ -52,13 +54,14 @@ public class UPIGateway extends AppCompatActivity {
         mWebView = findViewById(R.id.activity_gateway);
         Intent intent = getIntent();
         amount=intent.getStringExtra("amount");
-        Global.amount=amount;
+        Global.amount=Double.parseDouble(amount);
         Global.timestamp=intent.getStringExtra("timestamp");
         Global.api_key=intent.getStringExtra("api_key");
         Global.salt=intent.getStringExtra("salt");
         Global.initiator_id=intent.getStringExtra("initiator_id");
         Global.aid=intent.getStringExtra("aid");
         Global.api_key=intent.getStringExtra("api_key");
+        deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Enable Javascript
         mWebView.setWebViewClient(new WebViewClient());
@@ -66,13 +69,39 @@ public class UPIGateway extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowContentAccess(true);
         mWebView.addJavascriptInterface(new WebAppInterface(this), "ApuSDK");
+        if(amount.equals("") || Global.amount<1 || Global.amount>5000) {
+            showToastMessage("Invalid Amount");
+        } else {
+            amt=Global.amount.toString();
+            Long tsLong = System.currentTimeMillis()/1000;
+            String ts = tsLong.toString();
+            e1=amt+"#"+Global.initiator_id+"#"+Global.timestamp+"#"+Global.api_key+"#"+Global.aid+"#"+Global.salt+"#"+deviceId;
+            int len=e1.length();
+            Random random=new Random();
+            iv=Wrap.r1(16);
+            mcrypt = new MCrypt(iv,Wrap.t6());
+            int index=random.nextInt(len-5)+5;
+            try {
+                e1=mcrypt.bytesToHex( mcrypt.encrypt(e1) );
+                e1=Base64.encodeToString(e1.getBytes(),Base64.DEFAULT);
+                e1=mcrypt.bytesToHex( mcrypt.encrypt(e1) );
+                e1=e1+Wrap.t8()+String.valueOf(Wrap.enc(index));
+                String a,b;
+                a=e1.substring(0,index);
+                b=e1.substring(index);
+                e1=a+iv+b;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                url=new URL(Wrap.t9());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            new GenerateOrderID().execute();
+        }
 
         // REMOTE RESOURCE
-        mWebView.loadUrl(Wrap.t5());
-
-        // LOCAL RESOURCE
-//        mWebView.loadUrl("file:///android_asset/index.html");
-
     }
 
 
@@ -156,7 +185,7 @@ public class UPIGateway extends AppCompatActivity {
 
                     Long tsLong = System.currentTimeMillis()/1000;
                     String ts = tsLong.toString();
-                    e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+email+"#"+ts;
+                    e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+Global.aid+"#"+Global.timestamp;
                     int len=e1.length();
                     Random random=new Random();
                     iv=Wrap.r1(16);
@@ -186,6 +215,78 @@ public class UPIGateway extends AppCompatActivity {
     }
     public void showToast(String toast) {
         Toast.makeText(UPIGateway.this, toast, Toast.LENGTH_LONG).show();
+    }
+
+    class GenerateOrderID extends AsyncTask<String, String, String> {
+        private ProgressDialog pDialog;
+        String server_response;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(UPIGateway.this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+        protected String doInBackground(String... args) {
+            try {
+                // Simulate network access.
+                con = (HttpsURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("e1", e1));
+                OutputStream os = con.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getQuery(params));
+                writer.flush();
+                writer.close();
+                os.close();
+
+                con.connect();
+                int responseCode=con.getResponseCode();
+                if(responseCode == HttpsURLConnection.HTTP_OK){
+                    server_response = readStream(con.getInputStream());
+                    server_response = new String(mcrypt.decrypt(server_response));
+                    server_response = new String(Base64.decode(server_response,Base64.DEFAULT));
+                    server_response = new String(mcrypt.decrypt(server_response));
+                    jsonObject=new JSONObject(server_response);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        protected void onPostExecute(String arg) {
+            // dismiss the dialog after getting all products
+            // updating UI from Background Thread
+            if (pDialog != null && pDialog.isShowing()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    pDialog.dismiss();
+                } else {
+                    pDialog.dismiss();
+                }
+            }
+            try {
+                if (jsonObject.getString("status").equals("1")) {
+                    String order_id=jsonObject.getString("order_id");
+                    Global.order_id=order_id;
+                    Global.upi_id=jsonObject.getString("upi_id");
+//                    Global.amount=Double.parseDouble(amt);
+                    mWebView.loadUrl(Wrap.t5());
+                    finish();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     class submitResponse extends AsyncTask<String, String, String> {
@@ -283,5 +384,9 @@ public class UPIGateway extends AppCompatActivity {
         }
 
         return result.toString();
+    }
+
+    private void showToastMessage(String message) {
+        Toast.makeText(UPIGateway.this, message, Toast.LENGTH_LONG).show();
     }
 }
