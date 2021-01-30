@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -47,7 +49,7 @@ public class UPIGateway extends AppCompatActivity {
     private WebView mWebView;
     URL url;
     Intent intent;
-    String amount,email,e1="",iv="",amt,deviceId;
+    String amount,email,e1="",iv="",amt,deviceId,response;
     MCrypt mcrypt;
     HttpsURLConnection con;
     JSONObject jsonObject;
@@ -69,8 +71,6 @@ public class UPIGateway extends AppCompatActivity {
         Global.aid=intent.getStringExtra("aid");
         Global.api_key=intent.getStringExtra("api_key");
         deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        // Enable Javascript
         mWebView.setWebViewClient(new WebViewClient());
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -106,26 +106,19 @@ public class UPIGateway extends AppCompatActivity {
             }
             new GenerateOrderID().execute();
         }
-
-        // REMOTE RESOURCE
     }
-
 
     @Override
     public void onBackPressed() {
-        Log.d("index",String.valueOf(mWebView.copyBackForwardList().getCurrentIndex()));
-        Log.d("visited",String.valueOf(Global.visited));
         if (mWebView.copyBackForwardList().getCurrentIndex() > 0) {
             if(mWebView.getUrl().contains(Wrap.t4())) {
                 this.finish();
-//                signOut();
             } else {
                 mWebView.goBack();
             }
         }
         else {
-            // Your exit alert code, or alternatively line below to finish
-            super.onBackPressed(); // finishes activity
+            super.onBackPressed();
         }
     }
     @Override
@@ -133,7 +126,6 @@ public class UPIGateway extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 23) {
-            // Process based on the data in response.
             String msg="Unknown Error";
             if(data != null)
             {
@@ -143,11 +135,11 @@ public class UPIGateway extends AppCompatActivity {
                         Log.d("abab", key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
                     }
                 }
-//            result.setText(data.getStringExtra("response"));
                 String bank_ref="";
                 if(!data.getStringExtra("Status").equals("FAILURE"))
                 {
                     resp=data.getStringExtra("response");
+                    response=resp;
                     String[] resps=resp.split("&");
 
                     for(int i=0;i<resps.length;i++)
@@ -168,6 +160,7 @@ public class UPIGateway extends AppCompatActivity {
                     msg="FAILURE";
                     try {
                         resp=data.getStringExtra("response");
+                        response=resp;
                         String[] resps=resp.split("&");
 
                         for(int i=0;i<resps.length;i++)
@@ -192,7 +185,6 @@ public class UPIGateway extends AppCompatActivity {
                     Long tsLong = System.currentTimeMillis()/1000;
                     String ts = tsLong.toString();
                     e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+Global.aid+"#"+Global.timestamp;
-                    Log.d("unencrypted",e1);
                     int len=e1.length();
                     Random random=new Random();
                     iv=Wrap.r1(16);
@@ -208,7 +200,6 @@ public class UPIGateway extends AppCompatActivity {
                         a=e1.substring(0,index);
                         b=e1.substring(index);
                         e1=a+iv+b;
-                        Log.d("e1",e1);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -233,7 +224,6 @@ public class UPIGateway extends AppCompatActivity {
         }
         protected String doInBackground(String... args) {
             try {
-                // Simulate network access.
                 con = (HttpsURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
                 con.setDoInput(true);
@@ -244,7 +234,6 @@ public class UPIGateway extends AppCompatActivity {
                 BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(os, "UTF-8"));
                 writer.write(getFormData(params));
-                Log.d("formdata",getFormData(params));
                 writer.flush();
                 writer.close();
                 os.close();
@@ -268,25 +257,14 @@ public class UPIGateway extends AppCompatActivity {
             return null;
         }
         protected void onPostExecute(String arg) {
-            // dismiss the dialog after getting all products
-            // updating UI from Background Thread
-/*            if (pDialog != null && pDialog.isShowing()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    pDialog.dismiss();
-                } else {
-                    pDialog.dismiss();
-                }
-            }*/
             progress.setVisibility(View.GONE);
             try {
                 if (jsonObject.getString("status").equals("1")) {
                     String order_id=jsonObject.getString("order_id");
                     Global.order_id=order_id;
                     Global.upi_id=jsonObject.getString("upi_id");
-//                    Global.amount=Double.parseDouble(amt);
                     mWebView.addJavascriptInterface(new WebAppInterface(UPIGateway.this), "ApuSDK");
                     mWebView.loadUrl(Wrap.t5());
-//                    finish();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -300,16 +278,10 @@ public class UPIGateway extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-/*            pDialog = new ProgressDialog(UPIGateway.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();*/
             progress.setVisibility(View.VISIBLE);
         }
         protected String doInBackground(String... args) {
             try {
-                // Simulate network access.
                 con = (HttpsURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
                 con.setDoInput(true);
@@ -326,16 +298,11 @@ public class UPIGateway extends AppCompatActivity {
 
                 con.connect();
                 int responseCode=con.getResponseCode();
-                Log.d("responsecode",String.valueOf(responseCode));
                 if(responseCode == HttpsURLConnection.HTTP_OK){
                     server_response = readStream(con.getInputStream());
-                    Log.d("R1",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
-                    Log.d("R2",server_response);
                     server_response = new String(Base64.decode(server_response,Base64.DEFAULT));
-                    Log.d("R3",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
-                    Log.d("R4",server_response);
                     jsonObject=new JSONObject(server_response);
                 }
             } catch (IOException e) {
@@ -348,15 +315,19 @@ public class UPIGateway extends AppCompatActivity {
             return null;
         }
         protected void onPostExecute(String arg) {
-            // dismiss the dialog after getting all products
-            // updating UI from Background Thread
-/*            if (pDialog != null && pDialog.isShowing()) {
-                pDialog.dismiss();
-            }*/
             progress.setVisibility(View.GONE);
             try {
                 if (jsonObject.getString("status").equals("1")) {
                     mWebView.loadUrl(Wrap.t4()+resp+"&amount="+amount);
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent resp = new Intent();
+                            resp.putExtra("response",response);
+                            setResult(RESULT_OK, resp);
+                            finish();
+                        }
+                    }, 5000);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
