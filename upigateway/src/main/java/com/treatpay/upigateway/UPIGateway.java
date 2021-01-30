@@ -105,6 +105,7 @@ public class UPIGateway extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
+            Log.d("e1",e1);
             new GenerateOrderID().execute();
         }
 
@@ -258,9 +259,13 @@ public class UPIGateway extends AppCompatActivity {
                 int responseCode=con.getResponseCode();
                 if(responseCode == HttpsURLConnection.HTTP_OK){
                     server_response = readStream(con.getInputStream());
+                    Log.d("R1",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
+                    Log.d("R2",server_response);
                     server_response = new String(Base64.decode(server_response,Base64.DEFAULT));
+                    Log.d("R3",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
+                    Log.d("R4",server_response);
                     jsonObject=new JSONObject(server_response);
                 }
             } catch (IOException e) {
