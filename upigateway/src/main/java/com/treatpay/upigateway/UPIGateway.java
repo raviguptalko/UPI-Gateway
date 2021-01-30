@@ -1,6 +1,7 @@
 package com.treatpay.upigateway;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -34,6 +36,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -241,12 +244,12 @@ public class UPIGateway extends AppCompatActivity {
                 con.setRequestMethod("POST");
                 con.setDoInput(true);
                 con.setDoOutput(true);
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("e1", e1));
+                ContentValues params = new ContentValues();
+                params.put("e1", e1);
                 OutputStream os = con.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getQuery(params));
+                writer.write(getFormData(params));
                 writer.flush();
                 writer.close();
                 os.close();
@@ -315,12 +318,12 @@ public class UPIGateway extends AppCompatActivity {
                 con.setRequestMethod("POST");
                 con.setDoInput(true);
                 con.setDoOutput(true);
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("e1", e1));
+                ContentValues params = new ContentValues();
+                params.put("e1", e1);
                 OutputStream os = con.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getQuery(params));
+                writer.write(getFormData(params));
                 writer.flush();
                 writer.close();
                 os.close();
@@ -374,27 +377,44 @@ public class UPIGateway extends AppCompatActivity {
         }
     }
 
-    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+/*    private String getQuery(List<Pair> params) throws UnsupportedEncodingException
     {
         StringBuilder result = new StringBuilder();
         boolean first = true;
 
-        for (NameValuePair pair : params)
+        for (Pair pair : params)
         {
             if (first)
                 first = false;
             else
                 result.append("&");
 
-            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append(URLEncoder.encode(pair., "UTF-8"));
             result.append("=");
             result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
         }
 
         return result.toString();
-    }
+    }*/
 
     private void showToastMessage(String message) {
         Toast.makeText(UPIGateway.this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public String getFormData(ContentValues contentValues) throws UnsupportedEncodingException {
+
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : contentValues.valueSet()) {
+            if (first)
+                first = false;
+            else
+                sb.append("&");
+
+            sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            sb.append("=");
+            sb.append(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
+        }
+        return sb.toString();
     }
 }
