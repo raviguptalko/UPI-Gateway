@@ -106,6 +106,7 @@ public class UPIGateway extends AppCompatActivity {
                 e.printStackTrace();
             }
             Log.d("e1",e1);
+            Log.d("url",url.toString());
             new GenerateOrderID().execute();
         }
 
@@ -251,6 +252,7 @@ public class UPIGateway extends AppCompatActivity {
                 BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(os, "UTF-8"));
                 writer.write(getFormData(params));
+                Log.d("formdata",getFormData(params));
                 writer.flush();
                 writer.close();
                 os.close();
