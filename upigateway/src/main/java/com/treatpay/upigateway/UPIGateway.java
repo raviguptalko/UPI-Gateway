@@ -83,6 +83,7 @@ public class UPIGateway extends AppCompatActivity {
             Long tsLong = System.currentTimeMillis()/1000;
             String ts = tsLong.toString();
             e1=amt+"#"+Global.initiator_id+"#"+Global.timestamp+"#"+Global.api_key+"#"+Global.aid+"#"+Global.salt+"#"+deviceId;
+            Log.d("unencrypted",e1);
             int len=e1.length();
             Random random=new Random();
             iv=Wrap.r1(16);
