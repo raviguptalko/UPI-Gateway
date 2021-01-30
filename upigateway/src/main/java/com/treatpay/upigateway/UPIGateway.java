@@ -75,7 +75,6 @@ public class UPIGateway extends AppCompatActivity {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowContentAccess(true);
-        mWebView.addJavascriptInterface(new WebAppInterface(this), "ApuSDK");
         if(amount.equals("") || Global.amount<1 || Global.amount>5000) {
             showToastMessage("Invalid Amount");
         } else {
@@ -299,6 +298,7 @@ public class UPIGateway extends AppCompatActivity {
                     Global.order_id=order_id;
                     Global.upi_id=jsonObject.getString("upi_id");
 //                    Global.amount=Double.parseDouble(amt);
+                    mWebView.addJavascriptInterface(new WebAppInterface(UPIGateway.this), "ApuSDK");
                     mWebView.loadUrl(Wrap.t5());
 //                    finish();
                 }
