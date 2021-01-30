@@ -62,6 +62,7 @@ public class WebAppInterface {
 //        Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
 //                "&am="+amount+"&cu="+currencyUnit+"&tr="+Global.order_id+"&mc=0000&mam=1");
         Uri uri = Uri.parse(Wrap.r2(payeeAddress,payeeName,transactionNote,amount,Global.order_id));
+        Log.d("Deep",uri.toString());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setClassName(upiPackage,activity);
         ((Activity) mContext).startActivityForResult(intent,23);

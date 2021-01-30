@@ -387,26 +387,6 @@ public class UPIGateway extends AppCompatActivity {
         }
     }
 
-/*    private String getQuery(List<Pair> params) throws UnsupportedEncodingException
-    {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        for (Pair pair : params)
-        {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(pair., "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }*/
-
     private void showToastMessage(String message) {
         Toast.makeText(UPIGateway.this, message, Toast.LENGTH_LONG).show();
     }
