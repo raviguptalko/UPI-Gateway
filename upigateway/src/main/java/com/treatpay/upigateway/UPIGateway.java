@@ -208,6 +208,7 @@ public class UPIGateway extends AppCompatActivity {
                         a=e1.substring(0,index);
                         b=e1.substring(index);
                         e1=a+iv+b;
+                        Log.d("e1",e1);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
