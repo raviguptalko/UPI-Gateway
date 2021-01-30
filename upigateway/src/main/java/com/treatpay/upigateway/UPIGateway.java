@@ -325,6 +325,7 @@ public class UPIGateway extends AppCompatActivity {
 
                 con.connect();
                 int responseCode=con.getResponseCode();
+                Log.d("responsecode",String.valueOf(responseCode));
                 if(responseCode == HttpsURLConnection.HTTP_OK){
                     server_response = readStream(con.getInputStream());
                     Log.d("R1",server_response);
