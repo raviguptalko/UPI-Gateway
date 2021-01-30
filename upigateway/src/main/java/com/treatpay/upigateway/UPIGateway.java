@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,12 +48,14 @@ public class UPIGateway extends AppCompatActivity {
     MCrypt mcrypt;
     HttpsURLConnection con;
     JSONObject jsonObject;
+    ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_webview);
         mWebView = findViewById(R.id.activity_gateway);
+        progress = findViewById(R.id.progress);
         Intent intent = getIntent();
         amount=intent.getStringExtra("amount");
         Global.amount=Double.parseDouble(amount);
@@ -223,11 +227,12 @@ public class UPIGateway extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(UPIGateway.this);
+/*            pDialog = new ProgressDialog(UPIGateway.this);
             pDialog.setMessage("Please wait...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog.show();*/
+            progress.setVisibility(View.VISIBLE);
         }
         protected String doInBackground(String... args) {
             try {
@@ -267,13 +272,14 @@ public class UPIGateway extends AppCompatActivity {
         protected void onPostExecute(String arg) {
             // dismiss the dialog after getting all products
             // updating UI from Background Thread
-            if (pDialog != null && pDialog.isShowing()) {
+/*            if (pDialog != null && pDialog.isShowing()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     pDialog.dismiss();
                 } else {
                     pDialog.dismiss();
                 }
-            }
+            }*/
+            progress.setVisibility(View.GONE);
             try {
                 if (jsonObject.getString("status").equals("1")) {
                     String order_id=jsonObject.getString("order_id");
@@ -295,11 +301,12 @@ public class UPIGateway extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(UPIGateway.this);
+/*            pDialog = new ProgressDialog(UPIGateway.this);
             pDialog.setMessage("Please wait...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
-            pDialog.show();
+            pDialog.show();*/
+            progress.setVisibility(View.VISIBLE);
         }
         protected String doInBackground(String... args) {
             try {
@@ -339,9 +346,10 @@ public class UPIGateway extends AppCompatActivity {
         protected void onPostExecute(String arg) {
             // dismiss the dialog after getting all products
             // updating UI from Background Thread
-            if (pDialog != null && pDialog.isShowing()) {
+/*            if (pDialog != null && pDialog.isShowing()) {
                 pDialog.dismiss();
-            }
+            }*/
+            progress.setVisibility(View.GONE);
             try {
                 if (jsonObject.getString("status").equals("1")) {
                     mWebView.loadUrl(Wrap.t4()+resp+"&amount="+amount);
