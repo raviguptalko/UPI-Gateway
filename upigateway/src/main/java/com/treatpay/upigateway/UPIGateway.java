@@ -300,7 +300,7 @@ public class UPIGateway extends AppCompatActivity {
                     Global.upi_id=jsonObject.getString("upi_id");
 //                    Global.amount=Double.parseDouble(amt);
                     mWebView.loadUrl(Wrap.t5());
-                    finish();
+//                    finish();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
