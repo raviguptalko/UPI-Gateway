@@ -82,7 +82,6 @@ public class UPIGateway extends AppCompatActivity {
             Long tsLong = System.currentTimeMillis()/1000;
             String ts = tsLong.toString();
             e1=amt+"#"+Global.initiator_id+"#"+Global.timestamp+"#"+Global.api_key+"#"+Global.aid+"#"+Global.salt+"#"+deviceId;
-            Log.d("unencrypted",e1);
             int len=e1.length();
             Random random=new Random();
             iv=Wrap.r1(16);
@@ -105,8 +104,6 @@ public class UPIGateway extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            Log.d("e1",e1);
-            Log.d("url",url.toString());
             new GenerateOrderID().execute();
         }
 
@@ -195,6 +192,7 @@ public class UPIGateway extends AppCompatActivity {
                     Long tsLong = System.currentTimeMillis()/1000;
                     String ts = tsLong.toString();
                     e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+Global.aid+"#"+Global.timestamp;
+                    Log.d("unencrypted",e1);
                     int len=e1.length();
                     Random random=new Random();
                     iv=Wrap.r1(16);
@@ -217,9 +215,7 @@ public class UPIGateway extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-//            Log.d("result", data.getStringExtra("response"));
             new submitResponse().execute();
-//            showToast(msg);
         }
     }
     public void showToast(String toast) {
@@ -232,11 +228,6 @@ public class UPIGateway extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-/*            pDialog = new ProgressDialog(UPIGateway.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();*/
             progress.setVisibility(View.VISIBLE);
         }
         protected String doInBackground(String... args) {
@@ -259,17 +250,11 @@ public class UPIGateway extends AppCompatActivity {
 
                 con.connect();
                 int responseCode=con.getResponseCode();
-                Log.d("responsecode",String.valueOf(responseCode));
-                Log.d("responsecodesuccess",String.valueOf(HttpsURLConnection.HTTP_OK));
                 if(responseCode == HttpsURLConnection.HTTP_OK){
                     server_response = readStream(con.getInputStream());
-                    Log.d("R1",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
-                    Log.d("R2",server_response);
                     server_response = new String(Base64.decode(server_response,Base64.DEFAULT));
-                    Log.d("R3",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
-                    Log.d("R4",server_response);
                     jsonObject=new JSONObject(server_response);
                 }
             } catch (IOException e) {
@@ -342,9 +327,13 @@ public class UPIGateway extends AppCompatActivity {
                 int responseCode=con.getResponseCode();
                 if(responseCode == HttpsURLConnection.HTTP_OK){
                     server_response = readStream(con.getInputStream());
+                    Log.d("R1",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
+                    Log.d("R2",server_response);
                     server_response = new String(Base64.decode(server_response,Base64.DEFAULT));
+                    Log.d("R3",server_response);
                     server_response = new String(mcrypt.decrypt(server_response));
+                    Log.d("R4",server_response);
                     jsonObject=new JSONObject(server_response);
                 }
             } catch (IOException e) {

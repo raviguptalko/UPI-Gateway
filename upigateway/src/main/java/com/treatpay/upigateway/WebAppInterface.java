@@ -21,12 +21,10 @@ public class WebAppInterface {
     String amount = Global.amount.toString();
     String currencyUnit = "INR";
 
-    /** Instantiate the interface and set the context */
     WebAppInterface(Context c) {
         mContext = c;
     }
 
-    /** Show a toast from the web page */
     @JavascriptInterface
     public void showToast(String toast) {
         Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
@@ -35,7 +33,6 @@ public class WebAppInterface {
     public String upiHandlers(){
         Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
                 "&am="+amount+"&cu="+currencyUnit);
-        Log.d("Apurav UPI deeplink", "onClick: uri: "+uri);
 
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         List<ResolveInfo> activities =  mContext.getPackageManager().queryIntentActivities(intent,0);
@@ -59,10 +56,7 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void openUPIHandler(String upiPackage,String activity){
-//        Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
-//                "&am="+amount+"&cu="+currencyUnit+"&tr="+Global.order_id+"&mc=0000&mam=1");
         Uri uri = Uri.parse(Wrap.r2(payeeAddress,payeeName,transactionNote,amount,Global.order_id));
-        Log.d("Deep",uri.toString());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setClassName(upiPackage,activity);
         ((Activity) mContext).startActivityForResult(intent,23);
