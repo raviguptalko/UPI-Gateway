@@ -136,28 +136,51 @@ public class UPIGateway extends AppCompatActivity {
                     }
                 }
                 String bank_ref="";
-                if(!data.getStringExtra("Status").equals("FAILURE"))
-                {
-                    resp=data.getStringExtra("response");
-                    response=resp;
-                    String[] resps=resp.split("&");
-
-                    for(int i=0;i<resps.length;i++)
+                if(!Global.app.equals("in.org.npci.upiapp")) {
+                    if(!data.getStringExtra("Status").equals("FAILURE"))
                     {
-                        String[] x=resps[i].split("=");
-                        if(x[0].equals("Status"))
+                        resp=data.getStringExtra("response");
+                        response=resp;
+                        String[] resps=resp.split("&");
+
+                        for(int i=0;i<resps.length;i++)
                         {
-                            msg=x[1];
-                        }
-                        if(x[0].equals("txnId"))
-                        {
-                            bank_ref=x[1];
+                            String[] x=resps[i].split("=");
+                            if(x[0].equals("Status"))
+                            {
+                                msg=x[1];
+                            }
+                            if(x[0].equals("txnId"))
+                            {
+                                bank_ref=x[1];
+                            }
                         }
                     }
-                }
-                else
-                {
-                    msg="FAILURE";
+                    else
+                    {
+                        msg="FAILURE";
+                        try {
+                            resp=data.getStringExtra("response");
+                            response=resp;
+                            String[] resps=resp.split("&");
+
+                            for(int i=0;i<resps.length;i++)
+                            {
+                                String[] x=resps[i].split("=");
+                                if(x[0].equals("Status"))
+                                {
+//                                msg=x[1];
+                                }
+                                if(x[0].equals("txnId"))
+                                {
+                                    bank_ref=x[1];
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
                     try {
                         resp=data.getStringExtra("response");
                         response=resp;
