@@ -304,6 +304,7 @@ public class UPIGateway extends AppCompatActivity {
                     server_response = new String(Base64.decode(server_response,Base64.DEFAULT));
                     server_response = new String(mcrypt.decrypt(server_response));
                     jsonObject=new JSONObject(server_response);
+                    Log.d("server_response",server_response);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
