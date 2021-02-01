@@ -38,10 +38,8 @@ public class WebAppInterface {
         List<ResolveInfo> activities =  mContext.getPackageManager().queryIntentActivities(intent,0);
         StringBuilder apps = new StringBuilder();
         boolean first = true;
-        Log.d("Test",activities.toString());
         for (ResolveInfo act : activities) {
             ActivityInfo ai = act.activityInfo;
-            Log.d("###",""+" :: "+ai.applicationInfo.packageName+" | "+ai.name);
             if(first){
                 apps.append(ai.applicationInfo.packageName+"|"+ai.name);
                 first=!first;
@@ -50,7 +48,6 @@ public class WebAppInterface {
 
             }
         }
-        Log.d("Apps","ABC");
         return  apps.toString();
     }
 

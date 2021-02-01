@@ -136,7 +136,29 @@ public class UPIGateway extends AppCompatActivity {
                     }
                 }
                 String bank_ref="";
-                if(!Global.app.equals("in.org.npci.upiapp")) {
+                if(Global.app.equals("in.org.npci.upiapp")) {
+                    try {
+                        resp=data.getStringExtra("response");
+                        response=resp;
+                        String[] resps=resp.split("&");
+
+                        for(int i=0;i<resps.length;i++)
+                        {
+                            String[] x=resps[i].split("=");
+                            if(x[0].equals("Status"))
+                            {
+//                                msg=x[1];
+                            }
+                            if(x[0].equals("txnId"))
+                            {
+                                bank_ref=x[1];
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if(Global.app.equals("com.csam.icici.bank.imobile")) {
+                } else {
                     if(!data.getStringExtra("Status").equals("FAILURE"))
                     {
                         resp=data.getStringExtra("response");
@@ -150,7 +172,7 @@ public class UPIGateway extends AppCompatActivity {
                             {
                                 msg=x[1];
                             }
-                            if(x[0].equals("txnId"))
+                            if(x[0].equals("ApprovalRefNo"))
                             {
                                 bank_ref=x[1];
                             }
@@ -179,27 +201,6 @@ public class UPIGateway extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-                } else {
-                    try {
-                        resp=data.getStringExtra("response");
-                        response=resp;
-                        String[] resps=resp.split("&");
-
-                        for(int i=0;i<resps.length;i++)
-                        {
-                            String[] x=resps[i].split("=");
-                            if(x[0].equals("Status"))
-                            {
-//                                msg=x[1];
-                            }
-                            if(x[0].equals("txnId"))
-                            {
-                                bank_ref=x[1];
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
                 try {
@@ -286,7 +287,7 @@ public class UPIGateway extends AppCompatActivity {
                     String order_id=jsonObject.getString("order_id");
                     Global.order_id=order_id;
                     Global.upi_id=jsonObject.getString("upi_id");
-                    mWebView.addJavascriptInterface(new WebAppInterface(UPIGateway.this), "ApuSDK");
+                    mWebView.addJavascriptInterface(new WebAppInterface(UPIGateway.this), "TP");
                     mWebView.loadUrl(Wrap.t5());
                 }
             } catch (JSONException e) {
