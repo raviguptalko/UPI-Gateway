@@ -63,7 +63,6 @@ public class UPIGateway extends AppCompatActivity {
         Global.initiator_id=intent.getStringExtra("initiator_id");
         Global.aid=intent.getStringExtra("aid");
         Global.api_key=intent.getStringExtra("api_key");
-        Log.d("check","success");
         deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         mWebView.setWebViewClient(new WebViewClient());
         WebSettings webSettings = mWebView.getSettings();
@@ -225,6 +224,7 @@ public class UPIGateway extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+            showToast("Abhishek");
             new submitResponse().execute();
         }
     }
