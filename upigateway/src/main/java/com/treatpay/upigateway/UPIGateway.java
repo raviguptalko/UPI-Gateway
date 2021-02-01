@@ -150,7 +150,28 @@ public class UPIGateway extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if(Global.app.equals("com.csam.icici.bank.imobile") || Global.app.equals("com.mobikwik_new")) {
+                } else if(Global.app.equals("com.mobikwik_new")) {
+                    try {
+                        resp=data.getStringExtra("response");
+                        response=resp;
+                        String[] resps=resp.split("&");
+
+                        for(int i=0;i<resps.length;i++)
+                        {
+                            String[] x=resps[i].split("=");
+                            if(x[0].equals("Status"))
+                            {
+//                                msg=x[1];
+                            }
+                            if(x[0].equals("ApprovalRefNo"))
+                            {
+                                bank_ref=x[1];
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if(Global.app.equals("com.csam.icici.bank.imobile")) {
                     if(!data.getStringExtra("Status").equals("FAILURE"))
                     {
                         resp=data.getStringExtra("response");
@@ -208,7 +229,7 @@ public class UPIGateway extends AppCompatActivity {
                             {
                                 msg=x[1];
                             }
-                            if(x[0].equals("ApprovalRefNo"))
+                            if(x[0].equals("txnId"))
                             {
                                 bank_ref=x[1];
                             }
