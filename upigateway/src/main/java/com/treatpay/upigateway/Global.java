@@ -23,4 +23,5 @@ public class Global {
     public static String salt="";
     public static String api_key="";
     public static String initiator_id="";
+    public static String app="";
 }
