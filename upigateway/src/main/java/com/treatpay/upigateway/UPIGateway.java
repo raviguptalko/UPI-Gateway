@@ -117,7 +117,7 @@ public class UPIGateway extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d("App used",Global.app);
         if (requestCode == 23) {
             String msg="Unknown Error";
             if(data != null)
@@ -140,7 +140,7 @@ public class UPIGateway extends AppCompatActivity {
                             String[] x=resps[i].split("=");
                             if(x[0].equals("Status"))
                             {
-//                                msg=x[1];
+                                msg=x[1];
                             }
                             if(x[0].equals("txnId"))
                             {
@@ -161,7 +161,7 @@ public class UPIGateway extends AppCompatActivity {
                             String[] x=resps[i].split("=");
                             if(x[0].equals("Status"))
                             {
-//                                msg=x[1];
+                                msg=x[1];
                             }
                             if(x[0].equals("ApprovalRefNo"))
                             {
