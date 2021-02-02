@@ -265,7 +265,7 @@ public class UPIGateway extends AppCompatActivity {
 
                     Long tsLong = System.currentTimeMillis()/1000;
                     String ts = tsLong.toString();
-                    e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+Global.aid+"#"+Global.timestamp;
+                    e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+Global.aid+"#"+Global.timestamp+"#"+Global.app;
                     int len=e1.length();
                     Random random=new Random();
                     iv=Wrap.r1(16);
@@ -288,7 +288,6 @@ public class UPIGateway extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            showToast("Abhishek Singh");
             new submitResponse().execute();
         }
     }
