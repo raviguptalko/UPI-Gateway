@@ -266,6 +266,7 @@ public class UPIGateway extends AppCompatActivity {
                     Long tsLong = System.currentTimeMillis()/1000;
                     String ts = tsLong.toString();
                     e1=Global.order_id+"#"+msg+"#"+bank_ref+"#"+Global.aid+"#"+Global.timestamp+"#"+Global.app;
+                    Log.d("R1",e1);
                     int len=e1.length();
                     Random random=new Random();
                     iv=Wrap.r1(16);
@@ -273,8 +274,11 @@ public class UPIGateway extends AppCompatActivity {
                     int index=random.nextInt(len-5)+5;
                     try {
                         e1=mcrypt.bytesToHex( mcrypt.encrypt(e1) );
+                        Log.d("R2",e1);
                         e1= Base64.encodeToString(e1.getBytes(),Base64.DEFAULT);
+                        Log.d("R3",e1);
                         e1=mcrypt.bytesToHex( mcrypt.encrypt(e1) );
+                        Log.d("R4",e1);
                         Integer integer=Wrap.enc(index);
                         e1=e1+Wrap.t8()+integer.toString();
                         String a,b;
