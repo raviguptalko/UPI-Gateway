@@ -150,7 +150,7 @@ public class UPIGateway extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if(Global.app.equals("com.mobikwik_new")) {
+                } else if(Global.app.equals("com.mobikwik_new") || Global.app.equals("com.freecharge.android")) {
                     try {
                         resp=data.getStringExtra("response");
                         response=resp;
